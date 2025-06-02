@@ -6,3 +6,6 @@ This repository contains SQL queries I used to clean and analyze customer and pr
 - SQL (JOINs, CASE, GROUP BY, Window Functions)
 - Data cleaning and transformation
 - Business logic implementation
+
+## Tools
+- Microsoft SQL Server
