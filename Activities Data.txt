@@ -1,0 +1,89 @@
+SELECT
+  HAR_ACTIVITIES.AGENCY,
+  HAR_ACTIVITIES.[ACTION],
+  HAR_ACTIVITIES.SUBJECT,
+  HAR_ACTIVITIES.START_DATE,
+  HAR_ACTIVITIES.END_DATE,
+  HAR_ACTIVITIES.DUE_DATE,
+  HAR_ACTIVITIES.STATUS_DATE,
+  HAR_ACTIVITIES.REASON,
+  HAR_ACTIVITIES.STATUS,
+  HAR_ACTIVITIES.PROVIDER,
+  HAR_ACTIVITIES.CONSUMER_UUID,
+  HAR_ACTIVITIES.CONSUMER_FULL_NAME,
+  HAR_ACTIVITIES.ACTION_ITEM_UUID,
+  HAR_CONSUMERS.CLIENT_ID,
+  HAR_CONSUMERS.PRIMARY_CARE_MANAGER,
+  Cast(HAR_ACTIVITIES.END_DATE-HAR_ACTIVITIES.STATUS_DATE as int) as Days,
+  CASE HAR_ACTIVITIES.AGENCY
+      WHEN 'AgeSpan' THEN 'AgeSpan'	
+      WHEN 'BayPath Elder Services' THEN 'BayPath' 
+      WHEN 'Elder Services of Berkshire County, Inc.' THEN 'Berkshire'
+      WHEN 'Ethos' THEN 'Ethos'
+      WHEN 'Central Boston Elder Services, Inc.' THEN 'Central Boston'
+      WHEN 'Boston Senior Home Care' THEN 'Boston Senior'
+      WHEN 'Bristol Elder Services, Inc' THEN 'Bristol'
+      WHEN 'Elder Services of Cape Cod and the Islands, Inc.' THEN 'Cape Cod'
+      WHEN 'Coastline Elderly Services, Inc.' THEN 'Coastline'
+      WHEN 'Franklin County Home Care Corporation' THEN 'Franklin'
+      WHEN 'LifePath, Inc.' THEN 'LifePath'
+      WHEN 'SeniorCare, Inc.' THEN 'SeniorCare'
+      WHEN 'Highland Valley Elder Services, Inc.' THEN 'Highland'
+      WHEN 'WestMass ElderCare, Inc.' THEN 'WestMass'
+      WHEN 'HESSCO Elder Services' THEN 'HESSCO'
+      WHEN 'Greater Lynn Senior Services, Inc.' THEN 'Greater Lynn'
+      WHEN 'Elder Services of Merrimack Valley, Inc.' THEN 'Merrimack'
+      WHEN 'Minuteman Senior Services' THEN 'Minuteman'
+      WHEN 'Montachusett Home Care Corporation' THEN 'Montachusett'
+      WHEN 'Aging Services of North Central Massachusetts Inc' THEN 'North Central'
+      WHEN 'Mystic Valley Elder Services, Inc.' THEN 'Mystic Valley'
+      WHEN 'North Shore Elder Services, Inc.' THEN 'North Shore'
+      WHEN 'Old Colony Elder Services, Inc.' THEN 'Old Colony'
+      WHEN 'Somerville/Cambridge Elder Services, Inc.' THEN 'Somerville'
+      WHEN 'South Shore Elder Services, Inc.' THEN 'South Shore'
+      WHEN 'Greater Springfield Senior Services, Inc.' THEN 'Springfield'
+      WHEN 'Tri-Valley, Inc.' THEN 'Tri-Valley'
+      WHEN 'Springwell, Inc.' THEN 'Springwell'
+      WHEN 'Elder Services of Worcester Area, Inc.' THEN 'Worcester'
+      END AS ASAP,
+  CASE HAR_ACTIVITIES.AGENCY
+      WHEN 'AgeSpan' THEN 1
+      WHEN 'BayPath Elder Services' THEN 2
+      WHEN 'Elder Services of Berkshire County, Inc.' THEN 3
+      WHEN 'Boston Senior Home Care' THEN 4
+      WHEN 'Bristol Elder Services, Inc' THEN 5
+      WHEN 'Elder Services of Cape Cod and the Islands, Inc.' THEN 6
+      WHEN 'Central Boston Elder Services, Inc.' THEN 7
+      WHEN 'Coastline Elderly Services, Inc.' THEN 8
+      WHEN 'Ethos' THEN 9
+      WHEN 'LifePath, Inc.' THEN 10
+      WHEN 'SeniorCare, Inc.' THEN 11
+      WHEN 'HESSCO Elder Services' THEN 12
+      WHEN 'Highland Valley Elder Services, Inc.' THEN 13
+      WHEN 'Greater Lynn Senior Services, Inc.' THEN 14
+      WHEN 'Elder Services of Merrimack Valley, Inc.' THEN 15
+      WHEN 'Minuteman Senior Services' THEN 16
+      WHEN 'Mystic Valley Elder Services, Inc.' THEN 17
+      WHEN 'Aging Services of North Central Massachusetts Inc' THEN 18
+      WHEN 'North Shore Elder Services, Inc.' THEN 29
+      WHEN 'Old Colony Elder Services, Inc.' THEN 20
+      WHEN 'Somerville/Cambridge Elder Services, Inc.' THEN 21
+      WHEN 'South Shore Elder Services, Inc.' THEN 22
+      WHEN 'Greater Springfield Senior Services, Inc.' THEN 23
+      WHEN 'Springwell, Inc.' THEN 24
+      WHEN 'Tri-Valley, Inc.' THEN 25
+      WHEN 'WestMass ElderCare, Inc.' THEN 26
+      WHEN 'Elder Services of Worcester Area, Inc.' THEN 27
+END AS RANK,
+ISNULL(HAR_ACTIVITIES.REASON,'BLANK') AS REASON2
+
+FROM
+  HAR_CONSUMERS
+  INNER JOIN HAR_ACTIVITIES
+    ON HAR_CONSUMERS.CONSUMER_UUID = HAR_ACTIVITIES.CONSUMER_UUID
+
+WHERE
+  HAR_ACTIVITIES.[ACTION] = N'HC Program Referral & Intake'
+  and HAR_ACTIVITIES.STATUS_DATE >= @STATUS_DATE
+  and HAR_ACTIVITIES.STATUS_DATE <= @STATUS_DATE2
+  and HAR_ACTIVITIES.AGENCY IN (@AGENCY_NAME)
